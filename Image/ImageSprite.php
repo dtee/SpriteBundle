@@ -15,9 +15,11 @@ class ImageSprite
     protected $sprite;
     protected $width;
     protected $height;
+    protected $maxModifiedTime;
 
     public function __construct($path, $gutter = 10) {
         $this->gutter = $gutter;
+        $this->maxModifiedTime = 0;
 
         // Set up finder based on path
         $finder = new Finder();
@@ -50,6 +52,8 @@ class ImageSprite
                 $image = new Imagick();
                 $image->readImage($realPath);
 
+                $this->maxModifiedTime = max(filemtime($realPath), $this->maxModifiedTime);
+
                 $rectangle = new ImageRectangle($image, $realPath, $this->gutter);
                 $totalWidth += $rectangle->width;
                 $totalHeight += $rectangle->height;
@@ -72,53 +76,78 @@ class ImageSprite
 
                 $this->images[$key] = $rectangle;
             }
-        }
 
-        $totalImages = count($this->images);
-        $idealWidth = (int) (($totalWidth / $totalImages) * sqrt($totalImages));
-        $this->width = max($idealWidth, $maxWidth);
-        $this->height = $totalHeight;
+            $totalImages = count($this->images);
+            $idealWidth = (int) (($totalWidth / $totalImages) * sqrt($totalImages));
+            $this->width = max($idealWidth, $maxWidth);
+            $this->height = $totalHeight;
+
+            // Calculate x, y positions
+            $this->getSprite();
+        }
 
         return $this->images;
     }
 
+    /**
+     * @return integer
+     */
     public function getWidth() {
         return $this->width;
     }
 
+    /**
+     * @return integer
+     */
     public function getHeight() {
         return $this->height;
     }
 
+	/**
+	 * @return integer $maxModifiedTime
+	 */
+	public function getMaxModifiedTime()
+	{
+		return $this->maxModifiedTime;
+	}
+
+    /**
+     *
+     * @throws \Exception
+     * @return \Imagick
+     */
     public function getSprite() {
-        $images = $this->getImages();
-        $width = $this->getWidth();
-        $height = $this->getHeight();
+        if (!$this->sprite) {
+            $images = $this->getImages();
+            $width = $this->getWidth();
+            $height = $this->getHeight();
 
-        $canvas = new Canvas($width, $height);
-        $sprite = new Imagick();
-        $sprite->newImage($width, $height, "none");
+            $canvas = new Canvas($width, $height);
+            $sprite = new Imagick();
+            $sprite->newImage($width, $height, "none");
 
-        $maxY = 0;
-        foreach ($images as $path => $image) {
-            $image = $canvas->insert($image);
+            $maxY = 0;
+            foreach ($images as $path => $image) {
+                $image = $canvas->insert($image);
 
-            $maxY = max(($image->y + $image->height), $maxY);
-            if (!$image) {
-                throw new \Exception("Canvas can't fit {$path}");
+                $maxY = max(($image->y + $image->height), $maxY);
+                if (!$image) {
+                    throw new \Exception("Canvas can't fit {$path}");
+                }
+                else {
+                    $sprite->compositeImage(
+                        $image->getImage(),
+                        Imagick::COMPOSITE_DEFAULT,
+                        $image->x,
+                        $image->y);
+                }
             }
-            else {
-                $sprite->compositeImage(
-                    $image->getImage(),
-                    Imagick::COMPOSITE_DEFAULT,
-                    $image->x,
-                    $image->y);
-            }
+
+            $sprite->cropImage($width, $maxY, 0, 0);
+            $sprite->setImageFormat('png');
+            $this->sprite = $sprite;
         }
 
-        $sprite->cropImage($width, $maxY, 0, 0);
-        $sprite->setImageFormat('png');
-
-        return $sprite;
+        return $this->sprite;
     }
 }

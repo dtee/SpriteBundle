@@ -11,7 +11,7 @@ The bulk of the documentation is stored in the `Resources/doc/index.md`
 Installation
 ------------
 
-Update composer.json to include the bundle
+Modify your composer.json to include the bundle:
 
 	    "repositories": [
 	      {
@@ -20,24 +20,30 @@ Update composer.json to include the bundle
 	      },
 	    "require": {
 	        ...
-	        "dtc/queue": "*",
+	        "dtc/sprite": "*",
 	        ...
 	    }
 
-Update AppKernel to include the bundle
+
+Download the bundle by running:
+
+	php composer.phar update dtc/sprite
+
+Modify AppKernel to include the bundle:
 
 	new Dtc\SpriteBundle\DtcSpriteBundle()
 
-Add an config entry for using document manager
+Add an config entry for using document manager:
 
 	dtc_sprite:
 	    sprites:
 	        {name}:
 	            folder: folder_name
 	            type: png
+	        ...
 
 
-Register Controllers (optional)
+Register Controllers - edit routing.yml: (optional)
 
 	SpriteBundle:
 	    resource: "@DtcSpriteBundle/Resources/config/routing.yml"
@@ -46,8 +52,8 @@ Register Controllers (optional)
 Usage
 -----
 
-To generate sprite css:     dtc:sprite:generate_css
-To generate sprite images:  dtc:sprite:generate_image
+To generate sprite css:     `dtc:sprite:generate_css`
+To generate sprite images:  `dtc:sprite:generate_image`
 
 License
 -------

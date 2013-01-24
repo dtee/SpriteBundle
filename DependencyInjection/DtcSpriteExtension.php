@@ -16,9 +16,15 @@ class DtcSpriteExtension
     {
         $processor = new Processor();
         $configuration = new Configuration();
+        $config = $processor->processConfiguration($configuration, $configs);
 
-//         $yamlLoader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-//         $yamlLoader->load('sprite.yml');
+        $yamlLoader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $yamlLoader->load('sprite.yml');
+
+        $spriteManagerDef = $container->getDefinition('dtc_sprite.manager');
+        foreach ($config['sprites'] as $key => $spriteConfig) {
+            $spriteManagerDef->addMethodCall('addSpriteConfig', array($key, $spriteConfig));
+        }
     }
 
     public function getAlias()
