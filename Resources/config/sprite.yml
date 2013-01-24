@@ -1,0 +1,4 @@
+services:
+    dtc_sprite.manager:
+        class: Dtc\SpriteBundle\Image\ImageSpriteManager
+        arguments: []

@@ -1,0 +1,19 @@
+{
+    "name": "dtc/sprite",
+    "description": "Easy way to combine many images into a large image sprite file.",
+    "keywords": ["css sprite", "image", "sprite", "performance", "ui"],
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "David Tee"
+        }
+    ],
+    "require": {
+        "symfony/framework-bundle": "2.*"
+    },
+    "autoload": {
+        "psr-0": { "Dtc\\SpriteBundle": "" }
+    },
+    "target-dir": "Dtc/SpriteBundle"
+}

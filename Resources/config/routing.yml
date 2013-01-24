@@ -1,0 +1,4 @@
+grid:
+    resource: "@DtcSpriteBundle/Controller/GridController.php"
+    type:     annotation
+    prefix:  /sprite
