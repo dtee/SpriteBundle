@@ -1,6 +1,7 @@
 <?php
 namespace Dtc\SpriteBundle\Command;
 
+use Dtc\SpriteBundle\View\Css;
 use Dtc\SpriteBundle\Image\ImageSprite;
 
 use Asc\PlatformBundle\Documents\Profile\UserProfile;
@@ -37,24 +38,11 @@ class GenerateCssCommand
 
         foreach ($spriteImages as $name => $spriteImage) {
             $filename = "{$path}/{$name}.css";
-            file_put_contents($filename, $this->getCss($name, $spriteImage));
+            $css = Css::GetCss($name, $sprite);
+            file_put_contents($filename, $css);
             $output->writeln("{$filename}");
         }
 
         $output->writeln("Finished!");
-    }
-
-    protected function getCss($name, ImageSprite $spriteImage) {
-        $css = array();
-        foreach ($spriteImage->getImages() as $className => $image) {
-            $css[] = ".{$name}.{$className} {
-                    display: inline-block;
-                    width: {$image->getImageWidth()}px;
-                    height: {$image->getImageHeight()}px;
-                    background-position:-{$image->x}px -{$image->y}px;
-                }";
-        }
-
-        return implode("\n", $css);
     }
 }

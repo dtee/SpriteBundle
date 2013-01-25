@@ -1,39 +1,56 @@
-<ul>
-	{% for key in sprites %}
-		<li><a href="{{ path('dtc_sprite_sprite_view', {'name': key}) }}">{{ key }}</a></li>
-	{% endfor %}
-</ul>
+<html>
+    <head>
+    <style>
+    div.image-container {
+        background: green;
+        display: inline-block;
+        border: 1px solid black;
+        padding: 10px;
+        float: left;
+    }
 
+    div.preview {
+        float: left;
+        border: 1px sold #ddd;
+        padding: 10px;
+        margin-right: 20px;
+    }
+
+    .{{ name }} {
+        background: transparent url('{{ path('dtc_sprite_sprite_image', {"name": name}) }}') no-repeat;
+    }
+    </style>
+
+    <link rel="stylesheet" href="{{ path('dtc_sprite_sprite_css', {'name': name}) }}" type="text/css" media="all" />
+</head>
+    <body>
 <h1>Class Name: <span style="color:#0066FF; " id="image-name"></span></h1>
 
 <div>
     <h2>Selected Image (click it!) : <span style="color:#0066FF; " id="selected-name"></span></h2>
-    <div class="image-container">
-        <img id="tetris" src="{{ path('dtc_sprite_sprite_image', {"name": name}) }}"/>
+    <div>
+        <div class="image-container">
+            <img id="tetris" src="{{ path('dtc_sprite_sprite_image', {"name": name}) }}"/>
+        </div>
+
+        <div class="preview">
+            <div id="element"></div>
+        </div>
+
+        <div style="clear:both"></div>
     </div>
 <div>
 
 <div>
-    <h2>Sprites Listed: </h2>
-    <div class="image-container">
-    {% for key in sprite_hash|keys %}
-            <o class="{{ key }}"></o>
+    <h2>Sprites in system: </h2><ul>
+    {% for key in sprites %}
+        <li><a href="{{ path('dtc_sprite_sprite_view', {'name': key}) }}">{{ key }}</a></li>
     {% endfor %}
-    </div>
+</ul>
 <div>
-
-<style>
-.image-container {
-    background: green;
-    display: inline-block;
-    border: 1px solid black;
-    padding: 10px;
-}
-</style>
-
-<link rel="stylesheet" href="{{ path('dtc_sprite_sprite_css', {'name': name}) }}" type="text/css" media="all" />
 
 <script>
+    var spriteName = '{{ name }}';
     var spriteConf = {{ sprite_hash | json_encode | raw}};
     var spriteImage = document.getElementById('tetris');
 
@@ -69,6 +86,7 @@
             if (img) {
                 document.getElementById('image-name').innerHTML = img;
                 document.body.style.cursor = "pointer";
+                document.getElementById('element').className = spriteName + ' ' + img;
                 return;
             }
 
@@ -97,3 +115,6 @@
         document.getElementById('image-name').innerHTML = 'default';
     };
 </script>
+
+    </body>
+</html>

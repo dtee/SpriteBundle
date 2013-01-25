@@ -55,6 +55,12 @@ Usage
 To generate sprite css:     `dtc:sprite:generate_css`
 To generate sprite images:  `dtc:sprite:generate_image`
 
+If you registered the controller, you can view all sprites and class name:
+
+	/sprite/
+
+For usage example: `Resources/views/Sprite/index.html.twig`
+
 License
 -------
 

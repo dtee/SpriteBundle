@@ -1,6 +1,7 @@
 <?php
 namespace Dtc\SpriteBundle\Controller;
 
+use Dtc\SpriteBundle\View\Css;
 use Dtc\SpriteBundle\Image\ImageSprite;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -65,22 +66,14 @@ class SpriteController
     /**
      * Generate the css
      *
-     * @Route("/css/{name}")
+     * @Route("/css/{name}.css")
      */
     public function cssAction($name) {
-        $css = array();
         $spriteManager = $this->get('dtc_sprite.manager');
         $spriteImage = $spriteManager->get($name);
 
-        foreach ($spriteImage->getImages() as $className => $image) {
-            $css[] = ".{$name}.{$className} {
-            display: inline-block;
-            width: {$image->getImageWidth()}px;
-            height: {$image->getImageHeight()}px;
-            background-position:-{$image->x}px -{$image->y}px;
-            }";
-        }
+        $css = Css::GetCss($name, $spriteImage);
 
-        return new Response(implode("\n", $css));
+        return new Response($css);
     }
 }
