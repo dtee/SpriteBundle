@@ -19,6 +19,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->scalarNode('path')->isRequired()->end()
+                ->scalarNode('hash_algorithm')->end()
                 ->arrayNode('sprites')
                     ->isRequired()
                     ->requiresAtLeastOneElement()

@@ -28,6 +28,10 @@ class DtcSpriteExtension
 
         $generatorDef = $container->getDefinition('dtc_sprite.generator');
         $generatorDef->addMethodCall('setPath', array($config['path']));
+
+        if (isset($config['hash_algorithm'])) {
+            $generatorDef->addMethodCall('setAlgorithm', array($config['hash_algorithm']));
+        }
     }
 
     public function getAlias()

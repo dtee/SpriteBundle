@@ -12,7 +12,7 @@ class SpriteGenerator
 
     public function __construct($path = null) {
         $this->setPath($path);
-        $this->algorithm = 'crc32';
+        $this->algorithm = null;
     }
 
     /**

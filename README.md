@@ -36,6 +36,8 @@ Modify AppKernel to include the bundle:
 Add an config entry for using document manager:
 
 	dtc_sprite:
+	    path: %kernel.root_dir%/../web/sprite
+	    hash_algorithm: crc32   # defaults to file mod time + file size
 	    sprites:
 	        {name}:
 	            folder: folder_name
@@ -52,8 +54,7 @@ Register Controllers - edit routing.yml: (optional)
 Usage
 -----
 
-To generate sprite css:     `dtc:sprite:generate_css`
-To generate sprite images:  `dtc:sprite:generate_image`
+To generate sprite css:     `dtc:sprite:generate`
 
 If you registered the controller, you can view all sprites and class name:
 
