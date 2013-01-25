@@ -1,0 +1,99 @@
+<ul>
+	{% for key in sprites %}
+		<li><a href="{{ path('dtc_sprite_sprite_view', {'name': key}) }}">{{ key }}</a></li>
+	{% endfor %}
+</ul>
+
+<h1>Class Name: <span style="color:#0066FF; " id="image-name"></span></h1>
+
+<div>
+    <h2>Selected Image (click it!) : <span style="color:#0066FF; " id="selected-name"></span></h2>
+    <div class="image-container">
+        <img id="tetris" src="{{ path('dtc_sprite_sprite_image', {"name": name}) }}"/>
+    </div>
+<div>
+
+<div>
+    <h2>Sprites Listed: </h2>
+    <div class="image-container">
+    {% for key in sprite_hash|keys %}
+            <o class="{{ key }}"></o>
+    {% endfor %}
+    </div>
+<div>
+
+<style>
+.image-container {
+    background: green;
+    display: inline-block;
+    border: 1px solid black;
+    padding: 10px;
+}
+</style>
+
+<link rel="stylesheet" href="{{ path('dtc_sprite_sprite_css', {'name': name}) }}" type="text/css" media="all" />
+
+<script>
+    var spriteConf = {{ sprite_hash | json_encode | raw}};
+    var spriteImage = document.getElementById('tetris');
+
+    spriteImage.getImage = function(x, y) {
+        for(var img in spriteConf)
+        {
+            var width = parseInt(spriteConf[img]['width']);
+            var height = parseInt(spriteConf[img]['height']);
+            var offset_x = parseInt(spriteConf[img]['offset_x']);
+            var offset_y = parseInt(spriteConf[img]['offset_y']);
+
+            if(x >= offset_x
+                && x <= offset_x + width
+                && y >= offset_y
+                && y <= offset_y + height)
+            {
+                return img;
+            }
+        }
+
+        return null;
+    }
+
+    spriteImage.onmousemove = function(e)
+    {
+        return function(e)
+        {
+            var x = e.clientX - spriteImage.offsetLeft;
+            var y = e.clientY - spriteImage.offsetTop;
+
+            var img = spriteImage.getImage(x, y);
+
+            if (img) {
+                document.getElementById('image-name').innerHTML = img;
+                document.body.style.cursor = "pointer";
+                return;
+            }
+
+            document.getElementById('image-name').innerHTML = '';
+            document.body.style.cursor = "default";
+        }
+    }();
+
+    spriteImage.onclick = function()
+    {
+        return function(e)
+        {
+            var x = e.clientX - spriteImage.offsetLeft;
+            var y = e.clientY - spriteImage.offsetTop;
+            var img = spriteImage.getImage(x, y);
+
+            if (img) {
+                document.getElementById('selected-name').innerHTML = img;
+            }
+        };
+    }();
+
+
+    spriteImage.onmouseout = function()
+    {
+        document.getElementById('image-name').innerHTML = 'default';
+    };
+</script>

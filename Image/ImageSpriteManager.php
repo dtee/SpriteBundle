@@ -41,6 +41,10 @@ class ImageSpriteManager
         }
     }
 
+    public function getSpriteKeys() {
+        return array_keys($this->configs);
+    }
+
     public function getAll() {
         $sprites = array();
         foreach (array_keys($this->configs) as $key) {

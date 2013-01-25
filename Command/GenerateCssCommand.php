@@ -18,9 +18,9 @@ class GenerateCssCommand
     protected function configure()
     {
         $this
-	        ->setName('dtc:sprite:generate_css')
-	        ->addArgument('destination', InputArgument::REQUIRED, 'Destination Folder', null)
-	        ->setDescription('Generate Sprite css files')
+            ->setName('dtc:sprite:generate_css')
+            ->addArgument('destination', InputArgument::REQUIRED, 'Destination Folder', null)
+            ->setDescription('Generate Sprite css files')
         ;
     }
 
@@ -46,8 +46,13 @@ class GenerateCssCommand
 
     protected function getCss($name, ImageSprite $spriteImage) {
         $css = array();
-        foreach ($spriteImage->getImages() as $filename => $image) {
-            $css[] = ".{$name}.{$filename} { background-position:{$image->x}px {$image->y}px;}";
+        foreach ($spriteImage->getImages() as $className => $image) {
+            $css[] = ".{$name}.{$className} {
+                    display: inline-block;
+                    width: {$image->getImageWidth()}px;
+                    height: {$image->getImageHeight()}px;
+                    background-position:-{$image->x}px -{$image->y}px;
+                }";
         }
 
         return implode("\n", $css);
