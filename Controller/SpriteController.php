@@ -123,7 +123,7 @@ class SpriteController
         $params = array(
                 'name' => $name,
                 'hash' => $generator->getHash(),
-                'type' => 'png'
+                'type' => $type
         );
 
         $url = $this->generateUrl('dtc_sprite_sprite_file', $params);
