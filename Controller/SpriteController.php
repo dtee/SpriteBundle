@@ -9,8 +9,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 /**
  * Useful for debugging - do not use for production
@@ -22,12 +22,14 @@ class SpriteController
      * Summary stats
      *
      * @Route("/")
-     * @Route("/{name}", name="dtc_sprite_sprite_view")
+     * @Route("/view/{name}", name="dtc_sprite_sprite_view")
      * @Template()
      */
     public function indexAction($name = null) {
         $params = array();
+        $generator = $this->get('dtc_sprite.generator');
         $spriteManager = $this->get('dtc_sprite.manager');
+
         $keys = $spriteManager->getSpriteKeys();
 
         if (!$name) {
@@ -43,6 +45,8 @@ class SpriteController
             $hash[$key] = $image->toArray();
         }
 
+        $generator->setImageSprite($name, $spriteImage);
+
         $params['sprites'] = $keys;
         $params['name'] = $name;
         $params['sprite_hash'] = $hash;
@@ -51,29 +55,78 @@ class SpriteController
     }
 
     /**
-     * Summary stats
+     * Serve Sprite file
+     *
+     * @Route("/{name}-{hash}.{type}")
+     */
+    public function fileAction($name, $hash, $type) {
+        $response = new Response();
+
+//         $expireDate = new \DateTime();
+//         $expireDate->add(new \DateInterval('P10Y'));
+//         $response->setExpires($expireDate);
+
+        $response->setPublic();
+        $response->setMaxAge(600);
+        $response->setSharedMaxAge(600);
+        $response->setETag("{$hash}-{$type}");
+
+        if ($response->isNotModified($this->getRequest())) {
+            return $response;
+        }
+
+        $generator = $this->get('dtc_sprite.generator');
+        $spriteManager = $this->get('dtc_sprite.manager');
+
+        $spriteImage = $spriteManager->get($name);
+        $generator->setImageSprite($name, $spriteImage);
+
+        if ($type == 'css') {
+            $css = $generator->getCss();
+            $response->headers->set('Content-Type', 'text/css');
+            $response->setContent($css);
+        }
+        else {
+            $sprite = $spriteImage->getSprite();
+            $response->headers->set('Content-Type', 'image/png');
+            $response->setContent($sprite->getImageBlob());
+        }
+
+        return $response;
+    }
+
+    /**
+     * Generate Actual image url
      *
      * @Route("/image/{name}.png")
      */
     public function imageAction($name) {
-        $spriteManager = $this->get('dtc_sprite.manager');
-        $spriteImage = $spriteManager->get($name);
-        $sprite = $spriteImage->getSprite();
-        $headers = array('Content-Type' => 'image/png');
-        return new Response($sprite->getImageBlob(), 200, $headers);
+        return $this->redirectSprite($name, 'png');
     }
 
     /**
-     * Generate the css
+     * Generate Actual css url
      *
      * @Route("/css/{name}.css")
      */
     public function cssAction($name) {
+        return $this->redirectSprite($name, 'css');
+    }
+
+    protected function redirectSprite($name, $type) {
+        $generator = $this->get('dtc_sprite.generator');
         $spriteManager = $this->get('dtc_sprite.manager');
+
         $spriteImage = $spriteManager->get($name);
+        $generator->setImageSprite($name, $spriteImage);
 
-        $css = Css::GetCss($name, $spriteImage);
+        $params = array(
+                'name' => $name,
+                'hash' => $generator->getHash(),
+                'type' => 'png'
+        );
 
-        return new Response($css);
+        $url = $this->generateUrl('dtc_sprite_sprite_file', $params);
+        return $this->redirect($url);
     }
 }

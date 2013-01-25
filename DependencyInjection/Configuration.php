@@ -18,6 +18,7 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
+                ->scalarNode('path')->isRequired()->end()
                 ->arrayNode('sprites')
                     ->isRequired()
                     ->requiresAtLeastOneElement()

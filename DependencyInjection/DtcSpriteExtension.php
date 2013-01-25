@@ -25,6 +25,9 @@ class DtcSpriteExtension
         foreach ($config['sprites'] as $key => $spriteConfig) {
             $spriteManagerDef->addMethodCall('addSpriteConfig', array($key, $spriteConfig));
         }
+
+        $generatorDef = $container->getDefinition('dtc_sprite.generator');
+        $generatorDef->addMethodCall('setPath', array($config['path']));
     }
 
     public function getAlias()

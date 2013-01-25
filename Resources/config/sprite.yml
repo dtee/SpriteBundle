@@ -1,4 +1,9 @@
 services:
+    dtc_sprite.generator:
+        class: Dtc\SpriteBundle\Generator\SpriteGenerator
+        path: %dtc_sprite.path%
+
     dtc_sprite.manager:
         class: Dtc\SpriteBundle\Image\ImageSpriteManager
         arguments: []
+
