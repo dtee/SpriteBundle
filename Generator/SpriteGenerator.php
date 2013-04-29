@@ -9,6 +9,7 @@ class SpriteGenerator
     protected $imageSprite;
     protected $path;
     protected $algorithm;
+	public $imageServerpath;
 
     public function __construct($path = null) {
         $this->setPath($path);
@@ -73,7 +74,7 @@ class SpriteGenerator
 
     public function getCss() {
         $css = array();
-        $css[] = ".{$this->spriteName} { background: transparent url('{$this->getImageFilename(false)}') no-repeat; }";
+        $css[] = ".{$this->spriteName} { background: transparent url('{$this->imageServerpath}{$this->getImageFilename(false)}') no-repeat; }";
         foreach ($this->imageSprite->getImages() as $className => $image) {
             $css[] = ".{$this->spriteName}.{$className} {
                     width: {$image->getImageWidth()}px;

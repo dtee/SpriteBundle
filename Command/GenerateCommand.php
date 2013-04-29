@@ -17,6 +17,7 @@ class GenerateCommand
         $this
             ->setName('dtc:sprite:generate')
             ->addArgument('destination', InputArgument::OPTIONAL, 'Destination Folder', null)
+			->addOption('url-path', null, InputOption::VALUE_OPTIONAL, 'Image Server Path', null)
             ->setDescription('Generate Sprite css and images files to the destination folder')
         ;
     }
@@ -24,10 +25,13 @@ class GenerateCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $generator = $this->getContainer()->get('dtc_sprite.generator');
+
         $spriteManager = $this->getContainer()->get('dtc_sprite.manager');
         $spriteImages = $spriteManager->getAll();
 
         $path = $input->getArgument('destination');
+		$generator->imageServerpath = $input->getOption('url-path');
+
         if ($path) {
             $generator->setPath($path);
         }
